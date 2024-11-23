@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1008548943648",
+    "firebase_url": "https://untitled-supermarket-simulator-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "untitled-supermarket-simulator",
+    "storage_bucket": "untitled-supermarket-simulator.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008548943648:android:4987f23479aca14c2a2945",
+        "android_client_info": {
+          "package_name": "com.company.supermarket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOaE38AQShXDtkrExa4Auul08OxrN9Lsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
