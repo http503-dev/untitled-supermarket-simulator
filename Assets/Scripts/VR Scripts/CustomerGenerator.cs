@@ -1,30 +1,40 @@
+/*
+ * Author: Muhammad Farhan
+ * Date: 26/11/2024
+ * Description: Function to generate customers
+ */
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static CustomerData;
 
 public class CustomerGenerator : MonoBehaviour
 {
-    // List of possible first names
+    /// <summary>
+    /// List of possible first names
+    /// </summary>
     private static readonly List<string> FirstNames = new List<string> {
         "Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Hank", "Ivy", "Jack"
     };
 
-    // List of possible last names
+    /// <summary>
+    /// List of possible last names
+    /// </summary>
     private static readonly List<string> LastNames = new List<string> {
         "Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee", "Garcia", "Martinez", "Clark", "Walker"
     };
 
-    // List of grocery items with prices
-    private static readonly List<(string Name, float Price)> Items = new List<(string, float)> {
-        ("Canned Tuna", 3.55f), ("Milk", 5.50f), ("Bread", 3.00f), ("Eggs", 4.50f),
-        ("Rice", 6.00f), ("Pasta", 2.00f), ("Flour", 2.50f), ("Sugar", 3.00f),
-        ("Water", 1.50f), ("Bottled Drinks", 2.50f), ("Chips", 2.50f),
-        ("Coffee", 7.00f), ("Tea", 6.50f)
-    };
+    /// <summary>
+    /// Prefabs for all available items
+    /// </summary>
+    public List<GameObject> itemPrefabs; 
 
-    // Generate a random customer
-    public static CustomerData GenerateCustomer()
+    /// <summary>
+    /// Function to generate a random customer
+    /// </summary>
+    /// <returns></returns>
+    public CustomerData GenerateCustomer()
     {
         var random = new System.Random();
 
@@ -35,9 +45,16 @@ public class CustomerGenerator : MonoBehaviour
         DateTime expiryDate = GenerateRandomDate(new DateTime(2023, 1, 1), new DateTime(2030, 12, 31));
         bool isBlacklisted = random.Next(0, 2) == 1;
 
-        // Assign groceries
-        List<(string Name, float Price)> groceries = AssignGroceries(random);
-        float totalPrice = CalculateTotalPrice(groceries);
+        // Generate shopping list
+        List<ShoppingItem> shoppingList = GenerateShoppingList();
+
+        // Calculate total price
+        float totalPrice = 0f;
+        foreach (var item in shoppingList)
+        {
+            totalPrice += item.itemPrice;
+        }
+
 
         return new CustomerData
         {
@@ -47,40 +64,48 @@ public class CustomerGenerator : MonoBehaviour
             SpriteIndex = spriteIndex,
             ExpiryDate = expiryDate,
             IsBlacklisted = isBlacklisted,
-            Groceries = groceries,
+            ShoppingList = shoppingList,
             TotalPrice = totalPrice
         };
     }
 
-    // Generate a list of groceries
-    private static List<(string Name, float Price)> AssignGroceries(System.Random random)
+    /// <summary>
+    /// Function to generate a random shopping list based on available prefabs
+    /// </summary>
+    /// <returns></returns>
+    private List<ShoppingItem> GenerateShoppingList()
     {
-        int itemCount = random.Next(1, 10); // Random number of items (1 to 10)
-        var selectedItems = new List<(string Name, float Price)>();
-        var availableItems = new List<(string Name, float Price)>(Items);
+        var shoppingList = new List<ShoppingItem>();
+        var random = new System.Random();
 
-        for (int i = 0; i < itemCount; i++)
+        int numberOfItems = random.Next(1, 6); // Randomly pick 1–5 items
+
+        for (int i = 0; i < numberOfItems; i++)
         {
-            int randomIndex = random.Next(availableItems.Count);
-            selectedItems.Add(availableItems[randomIndex]);
-            availableItems.RemoveAt(randomIndex); // Avoid duplicates
+            int randomIndex = random.Next(itemPrefabs.Count);
+            GameObject prefab = itemPrefabs[randomIndex];
+
+            BarcodeItem barcodeItem = prefab.GetComponent<BarcodeItem>();
+            if (barcodeItem != null)
+            {
+                shoppingList.Add(new ShoppingItem
+                {
+                    itemName = barcodeItem.itemName,
+                    itemPrice = barcodeItem.itemPrice,
+                    itemPrefab = prefab
+                });
+            }
         }
 
-        return selectedItems;
+        return shoppingList;
     }
 
-    // Calculate total price of selected items
-    private static float CalculateTotalPrice(List<(string Name, float Price)> groceries)
-    {
-        float total = 0;
-        foreach (var item in groceries)
-        {
-            total += item.Price;
-        }
-        return total;
-    }
-
-    // Generate a random date between two dates
+    /// <summary>
+    /// Function to generate a random date between 2 dates (for id stuff)
+    /// </summary>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <returns></returns>
     private static DateTime GenerateRandomDate(DateTime startDate, DateTime endDate)
     {
         var random = new System.Random();

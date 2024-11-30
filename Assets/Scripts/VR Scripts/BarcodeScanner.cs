@@ -1,3 +1,8 @@
+/*
+ * Author: Muhammad Farhan
+ * Date: 27/11/2024
+ * Description: Script for handheld barcode scanner
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +11,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BarcodeScanner : MonoBehaviour
 {
+    /// <summary>
+    /// Settings for the barcode scanner
+    /// </summary>
     public Transform rayOrigin; // The origin point of the scanner's ray (e.g., the scanner's tip)
     public float scanRange = 2f; // Maximum scanning range
     public string barcodeTag = "Scannable"; // Tag for items that can be scanned
@@ -15,6 +23,9 @@ public class BarcodeScanner : MonoBehaviour
 
     private bool isBeingHeld = false; // Flag to track if the scanner is being held
 
+    /// <summary>
+    /// Setting the audio source and line renderer on awake
+    /// </summary>
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -33,11 +44,17 @@ public class BarcodeScanner : MonoBehaviour
         lineRenderer.endColor = Color.green;
     }
 
+    /// <summary>
+    /// Updating the line renderer live by calling the function 
+    /// </summary>
     void Update()
     {
         UpdateLineRenderer();
     }
 
+    /// <summary>
+    /// Function to scan the barcode/grocery items
+    /// </summary>
     public void Scan()
     {
         RaycastHit hit;
@@ -79,6 +96,9 @@ public class BarcodeScanner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to update line render 
+    /// </summary>
     void UpdateLineRenderer()
     {
         if (lineRenderer != null)
@@ -104,14 +124,20 @@ public class BarcodeScanner : MonoBehaviour
         }
     }
 
-    // Called when the scanner is grabbed
+    /// <summary>
+    /// Called when the scanner is grabbed
+    /// </summary>
+    /// <param name="args"></param>
     public void OnGrabbed(SelectEnterEventArgs args)
     {
         isBeingHeld = true;
         Debug.Log("Being held");
     }
 
-    // Called when the scanner is released
+    /// <summary>
+    /// Called when the scanner is released
+    /// </summary>
+    /// <param name="args"></param>
     public void OnReleased(SelectExitEventArgs args)
     {
         isBeingHeld = false;
