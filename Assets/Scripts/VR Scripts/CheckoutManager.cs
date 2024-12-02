@@ -25,7 +25,10 @@ public class CheckoutManager : MonoBehaviour
     public float itemSpacing = 0.5f; // Space between items
     private float currentOffset = 0f; // Tracks where to place the next item
 
-    private CustomerData currentCustomer;
+    public CustomerData currentCustomer;
+    private float customerPayment = 0f;
+
+    public CheckoutUI worldSpaceUI; // Reference to the UI script for displaying information
 
     void Awake()
     {
@@ -57,7 +60,12 @@ public class CheckoutManager : MonoBehaviour
     {
         scannedItems.Add(item);
         totalPrice += item.itemPrice;
-        Debug.Log($"Item added: {item.itemName}, Total Price: ${totalPrice:F2}");
+
+        // Add the item to the UI with a linked void button
+        worldSpaceUI.AddScannedItem(item.itemName, item.itemPrice, item);
+
+        // Update the displayed total price
+        worldSpaceUI.UpdateTotalPrice(totalPrice);
     }
 
     /// <summary>
@@ -67,6 +75,10 @@ public class CheckoutManager : MonoBehaviour
     {
         scannedItems.Clear();
         totalPrice = 0f;
+        currentCustomer = null; // Reset the current customer
+
+        // Reset the UI
+        worldSpaceUI.ResetUI();
         Debug.Log("Cart reset.");
     }
 
@@ -104,5 +116,30 @@ public class CheckoutManager : MonoBehaviour
 
         // Reset the offset for the next customer
         currentOffset = 0f;
+    }
+
+    /// <summary>
+    /// Function to void scanned item from checkout
+    /// </summary>
+    /// <param name="item"></param>
+    public void VoidItem(BarcodeItem item)
+    {
+        if (scannedItems.Contains(item))
+        {
+            scannedItems.Remove(item);
+            totalPrice -= item.itemPrice;
+
+            // Update UI for voided items
+            worldSpaceUI.RemoveScannedItem(item.itemName, item.itemPrice);
+
+            // Update the displayed total price
+            worldSpaceUI.UpdateTotalPrice(totalPrice);
+
+            Debug.Log($"Item voided: {item.itemName}, Updated Total Price: ${totalPrice:F2}");
+        }
+        else
+        {
+            Debug.Log("Item not found in scanned list.");
+        }
     }
 }

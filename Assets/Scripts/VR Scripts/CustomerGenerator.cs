@@ -78,7 +78,7 @@ public class CustomerGenerator : MonoBehaviour
         var shoppingList = new List<ShoppingItem>();
         var random = new System.Random();
 
-        int numberOfItems = random.Next(1, 6); // Randomly pick 1–5 items
+        int numberOfItems = random.Next(1, 4); // Randomly pick 1–3 items
 
         for (int i = 0; i < numberOfItems; i++)
         {

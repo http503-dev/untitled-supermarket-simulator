@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 8188450840109795021}
   - component: {fileID: 4483414542036070229}
   m_Layer: 0
-  m_Name: Barcode Scanner
+  m_Name: Barcode Scanner Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
