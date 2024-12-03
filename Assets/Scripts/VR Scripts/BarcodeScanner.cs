@@ -15,7 +15,7 @@ public class BarcodeScanner : MonoBehaviour
     /// Settings for the barcode scanner
     /// </summary>
     public Transform rayOrigin; // The origin point of the scanner's ray (e.g., the scanner's tip)
-    public float scanRange = 2f; // Maximum scanning range
+    public float scanRange = 0.5f; // Maximum scanning range
     public string barcodeTag = "Scannable"; // Tag for items that can be scanned
     public AudioClip scanSound; // Sound effect for successful scans
     private AudioSource audioSource;

@@ -1,45 +1,84 @@
+/*
+ * Author: Alfred Kang
+ * Date: 2/12/2024
+ * Description: Script to handle checkout
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PaymentManager : MonoBehaviour
 {
-    public CheckoutUI checkoutUI; // Reference to the world space UI
+    /// <summary>
+    /// References to things in the scene
+    /// </summary>
+    public CheckoutUI checkoutUI; // Reference to the UI script
     private CheckoutManager checkoutManager; // Reference to CheckoutManager
-    public float customerPayment = 0f; // The amount paid by the customer
-    private bool registerClosed = false;
+    public GameObject cashRegister; // Cash register GameObject
+    public Transform cashSpawnPoint; // Position to spawn change objects
 
+    /// <summary>
+    /// class/list to store the cash of different denominations
+    /// </summary>
+    [System.Serializable]
+    public class CashPrefabEntry
+    {
+        public float denomination; // The denomination of the cash (e.g., 1.0 for $1 bill)
+        public GameObject cashPrefab; // The prefab for this denomination
+    }
+    public List<CashPrefabEntry> cashPrefabMap; // List of cash prefabs mapped to their denominations
 
+    /// <summary>
+    /// Floats/bools to check various things 
+    /// </summary>
+    private float customerPayment = 0f; // Customer's total payment
+    private bool registerClosed = false; // Bool to check if register is closed
+
+    private float change = 0f; // The total change to be given to the player
+    private List<float> grabbedCash = new List<float>(); // Track the denominations grabbed by the player
+
+    /// <summary>
+    /// Denominations we are working with
+    /// </summary>
+    public readonly float[] denominations = { 20.0f, 10.0f, 5.0f, 2.0f, 1.0f, 0.50f, 0.20f, 0.10f, 0.05f, 0.01f };
+
+    /// <summary>
+    /// Get the CheckoutManager reference
+    /// </summary>
     void Start()
     {
-        // Get the CheckoutManager reference
         checkoutManager = CheckoutManager.Instance;
     }
 
-    public void StartPayment()
+    /// <summary>
+    /// Activate the cash register and generate customer cash offer
+    /// </summary>
+    public void ActivateCashRegister()
+    {
+        cashRegister.SetActive(true); // Open the cash register
+        GenerateCustomerCash();
+    }
+
+    /// <summary>
+    /// Function to generate an amount for the customer to give/pay
+    /// </summary>
+    private void GenerateCustomerCash()
     {
         if (checkoutManager.currentCustomer == null) return;
 
-        // Generate a random payment amount
-        customerPayment = checkoutManager.currentCustomer.TotalPrice + Random.Range(-1f, 10f);
-        customerPayment = Mathf.Max(0, customerPayment); // Ensure payment is not negative
+        float scannedTotal = checkoutManager.totalPrice;
 
-        Debug.Log($"Customer hands over: ${customerPayment:F2}");
+        // Customer offers cash within a range, based on scanned total
+        customerPayment = scannedTotal + Random.Range(-1f, 5f); // Adjust range as needed
+        customerPayment = Mathf.Max(0, customerPayment); // Ensure no negative cash is offered
 
-        // Display the payment in the UI
+        Debug.Log($"Customer offers: ${customerPayment:F2}");
         checkoutUI.UpdatePayment(customerPayment);
 
-        // Handle payment based on whether it's sufficient or not
-        if (customerPayment >= checkoutManager.currentCustomer.TotalPrice)
+        // Handle payment scenarios
+        if (customerPayment >= scannedTotal)
         {
-            float change = customerPayment - checkoutManager.currentCustomer.TotalPrice;
-
-            // Display change
-            Debug.Log($"Payment sufficient. Change to give: ${change:F2}");
-            checkoutUI.DisplayChange(change);
-
-            // Open the cash register but do not complete the transaction yet
-            StartCoroutine(OpenCashRegister(change));
+            HandleChange();
         }
         else
         {
@@ -47,83 +86,101 @@ public class PaymentManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handle underpayment
+    /// </summary>
     private void HandleUnderpayment()
     {
-        float amountNeeded = checkoutManager.currentCustomer.TotalPrice - customerPayment;
-        Debug.Log($"Underpayment. Customer still owes: ${amountNeeded:F2}");
-
-        // Display underpayment message in the UI
+        float amountNeeded = checkoutManager.totalPrice - customerPayment;
+        Debug.Log($"Underpayment detected. Customer owes: ${amountNeeded:F2}");
         checkoutUI.DisplayUnderpayment(amountNeeded);
-
-        // Allow the player to request more cash from the customer
         checkoutUI.ShowRequestMoreCashButton();
     }
 
+    /// <summary>
+    /// Request additional cash from the customer
+    /// </summary>
     public void RequestMoreCash()
     {
         if (checkoutManager.currentCustomer == null) return;
 
-        // Generate additional cash from the customer
-        float additionalCash = Random.Range(1f, 5f); // Customer hands over 1 to 5 dollars more
+        float additionalCash = Random.Range(1f, 10f); // Adjust range as needed
         customerPayment += additionalCash;
 
         Debug.Log($"Customer hands over additional cash: ${additionalCash:F2}");
         checkoutUI.UpdatePayment(customerPayment);
 
-        // Check if the new payment is sufficient
-        if (customerPayment >= checkoutManager.currentCustomer.TotalPrice)
+        if (customerPayment >= checkoutManager.totalPrice)
         {
-            float change = customerPayment - checkoutManager.currentCustomer.TotalPrice;
-
-            // Display change
-            Debug.Log($"Payment sufficient. Change to give: ${change:F2}");
-            checkoutUI.DisplayChange(change);
-
-            // Open the cash register but wait for player interaction to complete transaction
-            StartCoroutine(OpenCashRegister(change));
+            HandleChange();
         }
         else
         {
-            float amountNeeded = checkoutManager.currentCustomer.TotalPrice - customerPayment;
-            Debug.Log($"Still underpaid. Customer owes: ${amountNeeded:F2}");
-            checkoutUI.DisplayUnderpayment(amountNeeded);
+            HandleUnderpayment();
         }
     }
-    private void CompleteTransaction()
-    {
-        Debug.Log("Transaction complete. Ready for the next customer.");
 
-        // Reset the checkout for the next customer
-        checkoutManager.ResetCart();
-        registerClosed = false; // Reset the register closed state
-    }
-
-    private IEnumerator OpenCashRegister(float change)
+    /// <summary>
+    /// Handle overpayment and calculate change
+    /// </summary>
+    private void HandleChange()
     {
-        // Trigger cash register open animation
-        Debug.Log("Cash register opens.");
+        change = customerPayment - checkoutManager.totalPrice;
+        Debug.Log($"Overpayment detected. Change to give: ${change:F2}");
         checkoutUI.DisplayChange(change);
-
-        // Wait for the player to close the cash register
-        while (!registerClosed)
-        {
-            // Example: Replace with VR interaction or a button press
-            if (Input.GetKeyDown(KeyCode.C)) // Player closes the register (replace with VR input)
-            {
-                registerClosed = true;
-            }
-            yield return null;
-        }
-
-        // Reset transaction after the register is closed
-        CompleteTransaction();
     }
 
+    /// <summary>
+    /// Function to grab cash out of the register for handling change
+    /// </summary>
+    /// <param name="denomination"></param>
+    public void GrabCash(float denomination)
+    {
+        // The player grabs a denomination from the register
+        grabbedCash.Add(denomination);
+
+        // Find the prefab corresponding to the grabbed denomination
+        CashPrefabEntry cashPrefabEntry = cashPrefabMap.Find(entry => entry.denomination == denomination);
+
+        if (cashPrefabEntry != null)
+        {
+            // Instantiate the cash prefab at the spawn point
+            GameObject cashObject = Instantiate(cashPrefabEntry.cashPrefab, cashSpawnPoint.position, Quaternion.identity);
+
+            // Optionally, you can add some offset to stack the cash objects or animate them
+            cashObject.transform.position += new Vector3(grabbedCash.Count * 0.1f, 0, 0); // Adjust for stacking
+
+            Debug.Log($"Cash object for ${denomination} instantiated.");
+        }
+        else
+        {
+            Debug.LogWarning($"No prefab found for denomination ${denomination}.");
+        }
+    }
+
+    /// <summary>
+    /// Close the cash register and complete the transaction
+    /// </summary>
     public void CloseRegister()
     {
-        registerClosed = true;
-        Debug.Log("Register closed by the player.");
-        CompleteTransaction();
-    }
+        // Complete the transaction, regardless of whether the cash is correct
+        Debug.Log("Cash register closed. Transaction complete.");
 
+        // Optionally log the mistakes or incorrect change
+        float totalGrabbed = 0f;
+
+        foreach (float cash in grabbedCash)
+        {
+            totalGrabbed += cash;
+        }
+
+        Debug.Log($"Player grabbed a total of: ${totalGrabbed:F2}");
+
+        // Reset the state for the next transaction
+        cashRegister.SetActive(false);
+        checkoutManager.ResetCart(); // Reset for next customer
+        checkoutUI.ResetUI();
+        customerPayment = 0f;
+        grabbedCash.Clear(); // Clear the grabbed cash list
+    }
 }
