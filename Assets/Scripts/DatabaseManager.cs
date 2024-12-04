@@ -162,16 +162,19 @@ public class DatabaseManager : MonoBehaviour
                         Debug.LogFormat("User signed in successfully: {0} ({1})",
                             result.User.DisplayName, result.User.UserId);
                         WriteNewPlayer(
-                            result.User.UserId,
-                            username,
-                            "",
-                            false,
-                            0,
-                            0,
-                            0, 
-                            0f,
-                            0
-                        );
+                                result.User.UserId,
+                                username,
+                                "", 
+                                false,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0f,
+                                0,
+                                0,
+                                0
+                            );
                         ResetFields();
                     });
                 }
@@ -273,9 +276,43 @@ public class DatabaseManager : MonoBehaviour
         }
     }
     
-    private void WriteNewPlayer(string uid, string name, string storeName, bool isAdmin, int shiftsCompleted, int itemsScanned, int mistakesMade, float profitsEarned, int highScore)
+    private void WriteNewPlayer(
+        string uid,
+        string name,
+        string storeName,
+        bool isAdmin,
+        int shiftsCompleted,
+        int customersServed,
+        int itemsScanned,
+        int mistakesMade,
+        float profitsEarned,
+        int highScore,
+        int proficiencyScore,
+        int averageTimePerTransaction)
     {
-        PlayerData player = new PlayerData(name, storeName, isAdmin, shiftsCompleted, itemsScanned, mistakesMade, profitsEarned, highScore);
+        PlayerData.MistakesMade mistakes = new PlayerData.MistakesMade(
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        );
+        
+        PlayerData player = new PlayerData(
+            name,
+            storeName,
+            isAdmin,
+            shiftsCompleted,
+            customersServed,
+            itemsScanned,
+            mistakes, 
+            profitsEarned,
+            highScore,
+            proficiencyScore,
+            averageTimePerTransaction
+        );
+        
         Leaderboard leaderboardEntry = new Leaderboard(name, highScore, profitsEarned, shiftsCompleted);
         
         string playerJson = JsonUtility.ToJson(player);
