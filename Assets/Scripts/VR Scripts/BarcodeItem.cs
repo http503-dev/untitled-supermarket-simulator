@@ -14,4 +14,5 @@ public class BarcodeItem : MonoBehaviour
     /// </summary>
     public string itemName; // Name of the item
     public float itemPrice; // Price of the item
+    public bool isRestricted; // Check whether item is 18+
 }

@@ -1,7 +1,7 @@
 /*
  * Author: Alfred Kang
  * Date: 2/12/2024
- * Description: Script to handle checkout
+ * Description: Script to handle payment
  */
 using System.Collections;
 using System.Collections.Generic;
