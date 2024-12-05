@@ -406,14 +406,13 @@ public class DatabaseManager : MonoBehaviour
             if (!snapshot.Exists)
             {
                 Debug.Log("Session does not exist. Creating it...");
-                var sessionData = new
-                {
-                    createdOn = ConvertNowToTimeStamp(),
-                    currentCustomerIndex = 0,
-                    gameConnected = false,
-                    webConnected = false,
-                    timeElapsed = 0
-                };
+        
+                SessionData sessionData = new SessionData(
+                    false,
+                    false,
+                    ConvertNowToTimeStamp(),
+                    new SessionData.Customer()
+                );
 
                 string json = JsonUtility.ToJson(sessionData);
 
@@ -433,11 +432,10 @@ public class DatabaseManager : MonoBehaviour
                 if (args.Snapshot.Exists)
                 {
                     Debug.Log("Session data changed: " + args.Snapshot.GetRawJsonValue());
-                    Debug.Log(args.Snapshot.Child("gameConnected"));
-                    Debug.Log(args.Snapshot.Child("gameConnected").Value.ToString());
-                    bool gameConnected = bool.Parse(args.Snapshot.Child("gameConnected").Value.ToString());
-                    Debug.Log(gameConnected);
-                    lobbyMenu.ChangeWebReadyStatus(gameConnected);
+                    Debug.Log(args.Snapshot.Child("webConnected"));
+                    Debug.Log(args.Snapshot.Child("webConnected").Value.ToString());
+                    bool webConnected = bool.Parse(args.Snapshot.Child("webConnected").Value.ToString());
+                    lobbyMenu.ChangeWebReadyStatus(webConnected);
                 }
                 else
                 {
