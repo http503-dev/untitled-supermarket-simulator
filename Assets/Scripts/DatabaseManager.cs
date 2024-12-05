@@ -177,7 +177,6 @@ public class DatabaseManager : MonoBehaviour
                                 0
                             );
                         ResetFields();
-                        SceneManager.LoadScene("Supermarket");
                     });
                 }
 
@@ -227,7 +226,6 @@ public class DatabaseManager : MonoBehaviour
                     {
                         loginScreen.SetActive(false);
                         homeScreen.SetActive(true);
-                        SceneManager.LoadScene("Supermarket");
                         ResetFields();
                     }
 
