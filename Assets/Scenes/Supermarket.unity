@@ -246,6 +246,7 @@ MonoBehaviour:
   checkoutUI: {fileID: 1432196813}
   cashRegister: {fileID: 847050573}
   cashSpawnPoint: {fileID: 1797835132}
+  shiftDataTracker: {fileID: 633282149}
   cashPrefabMap:
   - denomination: 1
     cashPrefab: {fileID: 1896233078}
@@ -703,7 +704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -2.64
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -711,7 +712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.29
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -759,6 +760,50 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3587577044297675646, guid: 5ad44f5e9a0dd434192d6d2c8465fe79, type: 3}
   m_PrefabInstance: {fileID: 1621282401}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &633282148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 633282150}
+  - component: {fileID: 633282149}
+  m_Layer: 0
+  m_Name: Shift Data Tracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &633282149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633282148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f041f8c793b54c54eadac918b5a509a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &633282150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633282148}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.8492525, y: 2.1509836, z: 1.5960792}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &717211043
 GameObject:
   m_ObjectHideFlags: 0
@@ -2941,10 +2986,6 @@ MonoBehaviour:
   npcPrefab: {fileID: 1593262439325513843, guid: 121e444cfa72a9546a886fecb923f101, type: 3}
   spawnPoint: {fileID: 1306211981}
   customerGenerator: {fileID: 1306211982}
-  initialCustomers: 5
-  customerIncrement: 3
-  totalDays: 3
-  timePerDay: 30
 --- !u!4 &1306211981
 Transform:
   m_ObjectHideFlags: 0
@@ -3017,8 +3058,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5932091c1324b048815ca82575fa5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timePerDay: 480
+  shiftDuration: 60
   clockText: {fileID: 989078707}
+  shiftDataTracker: {fileID: 633282149}
 --- !u!4 &1344723045
 Transform:
   m_ObjectHideFlags: 0
@@ -3177,6 +3219,7 @@ MonoBehaviour:
   totalPrice: 0
   spawnPoint: {fileID: 843332274}
   itemSpacing: 0.2
+  shiftDataTracker: {fileID: 633282149}
   worldSpaceUI: {fileID: 1432196813}
 --- !u!4 &1432196809
 Transform:
@@ -3205,6 +3248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a462d6a6d156264cbc547ca57c7e43a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shiftDataTracker: {fileID: 633282149}
 --- !u!65 &1432196812
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5774,3 +5818,4 @@ SceneRoots:
   - {fileID: 983202940904739958}
   - {fileID: 921508265}
   - {fileID: 1344723045}
+  - {fileID: 633282150}

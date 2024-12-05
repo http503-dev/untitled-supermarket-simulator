@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Firebase.Auth;
 
 public class ShiftTimer : MonoBehaviour
 {
@@ -23,12 +24,27 @@ public class ShiftTimer : MonoBehaviour
     private bool isShiftActive;
 
     /// <summary>
+    /// Reference to ShiftDataTracker
+    /// </summary>
+    public ShiftDataTracker shiftDataTracker;
+    private string userId;
+
+    /// <summary>
     /// Set elapsed time to 0 and that a shift has started 
     /// </summary>
     void Start()
     {
+        userId = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            Debug.LogError("User ID not found. Ensure the user is authenticated.");
+            return;
+        }
+
         elapsedTime = 0f;
         isShiftActive = true;
+        
+        shiftDataTracker.StartShift(userId);
     }
 
     /// <summary>
@@ -52,7 +68,8 @@ public class ShiftTimer : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float virtualHours = Mathf.Lerp(9f, 17f, elapsedTime / shiftDuration); // Map elapsed time to 9 AM to 5 PM
             int hours = Mathf.FloorToInt(virtualHours);
-            clockText.text = $"{hours}:00"; // Display only hours
+            int minutes = Mathf.FloorToInt((virtualHours - hours) * 60);
+            clockText.text = $"{hours}:{minutes:D2}";
         }
         else
         {
@@ -67,6 +84,11 @@ public class ShiftTimer : MonoBehaviour
     {
         isShiftActive = false;
         clockText.text = "Shift Over!";
-        // Add logic to handle the end of the shift
+        elapsedTime = 0f;
+
+        // Finalize stats in ShiftDataTracker
+        shiftDataTracker.EndShift(userId);
+
+        Debug.Log("Shift ended successfully.");
     }
 }

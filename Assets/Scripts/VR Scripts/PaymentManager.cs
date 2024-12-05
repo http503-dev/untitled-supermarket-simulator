@@ -16,6 +16,7 @@ public class PaymentManager : MonoBehaviour
     private CheckoutManager checkoutManager; // Reference to CheckoutManager
     public GameObject cashRegister; // Cash register GameObject
     public Transform cashSpawnPoint; // Position to spawn change objects
+    public ShiftDataTracker shiftDataTracker; // Reference to ShiftDataTracker
 
     /// <summary>
     /// class/list to store the cash of different denominations
@@ -166,12 +167,41 @@ public class PaymentManager : MonoBehaviour
         // Complete the transaction, regardless of whether the cash is correct
         Debug.Log("Cash register closed. Transaction complete.");
 
-        // Optionally log the mistakes or incorrect change
+        // logging the mistakes or incorrect change
         float totalGrabbed = 0f;
 
         foreach (float cash in grabbedCash)
         {
             totalGrabbed += cash;
+
+            if (totalGrabbed > change)
+            {
+                shiftDataTracker.TrackMistake("ExcessChange");
+            }
+            else if (totalGrabbed < change)
+            {
+                shiftDataTracker.TrackMistake("InsufficientChange");
+            }
+        }
+
+        // Check if the customer payment was insufficient but the player ignored it
+        if (customerPayment < checkoutManager.totalPrice)
+        {
+            shiftDataTracker.TrackMistake("InsufficientPayment");
+            Debug.Log("Insufficient payment mistake: Player did not request enough cash.");
+        }
+
+        // Check for restricted sales
+        if (checkoutManager.currentCustomer != null && checkoutManager.currentCustomer.IsUnderage)
+        {
+            foreach (var item in checkoutManager.scannedItems)
+            {
+                if (item.isRestricted)
+                {
+                    shiftDataTracker.TrackMistake("RestrictedSale");
+                    Debug.Log("Restricted sale detected.");
+                }
+            }
         }
 
         Debug.Log($"Player grabbed a total of: ${totalGrabbed:F2}");

@@ -26,6 +26,19 @@ public class CustomerData
     public List<(string Name, float Price)> Groceries;
     public float TotalPrice;
 
+
+    public const int LegalAge = 18; // Minimum age for purchasing restricted items
+
+    public bool IsUnderage
+    {
+        get
+        {
+            int age = DateTime.Now.Year - DateOfBirth.Year;
+            if (DateTime.Now.DayOfYear < DateOfBirth.DayOfYear) age--;
+            return age < LegalAge;
+        }
+    }
+
     /// <summary>
     /// Customer's shopping list
     /// </summary>
@@ -50,6 +63,7 @@ public class CustomerData
                        $"ID Expiry Date: {ExpiryDate.ToShortDateString()}\n" +
                        $"Blacklisted: {IsBlacklisted}\n" +
                        $"Total Price: ${TotalPrice:F2}\n" +
+                       $"Underage: {IsUnderage}\n" +
                        $"Shopping List:";
 
         foreach (var item in ShoppingList)

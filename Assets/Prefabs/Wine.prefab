@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4519075343964925993}
   m_Layer: 0
   m_Name: Wine
-  m_TagString: Untagged
+  m_TagString: Scannable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -15,7 +15,7 @@ public class CheckoutManager : MonoBehaviour
     /// </summary>
     public static CheckoutManager Instance; // Singleton pattern
 
-    private List<BarcodeItem> scannedItems = new List<BarcodeItem>();
+    public List<BarcodeItem> scannedItems = new List<BarcodeItem>();
     public float totalPrice = 0f;
 
     /// <summary>
@@ -27,6 +27,7 @@ public class CheckoutManager : MonoBehaviour
 
     public CustomerData currentCustomer;
     private float customerPayment = 0f;
+    public ShiftDataTracker shiftDataTracker; // Reference to ShiftDataTracker
 
     public CheckoutUI worldSpaceUI; // Reference to the UI script for displaying information
 
@@ -61,9 +62,11 @@ public class CheckoutManager : MonoBehaviour
         scannedItems.Add(item);
         totalPrice += item.itemPrice;
 
+        // Increment items scanned
+        shiftDataTracker.TrackItemScan(item.itemPrice, false, false);
+
         // Add the item to the UI with a linked void button
         worldSpaceUI.AddScannedItem(item.itemName, item.itemPrice, item);
-
         // Update the displayed total price
         worldSpaceUI.UpdateTotalPrice(totalPrice);
     }
@@ -73,6 +76,9 @@ public class CheckoutManager : MonoBehaviour
     /// </summary>
     public void ResetCart()
     {
+        // Track missed scanned items
+        TrackMissedItems();
+
         scannedItems.Clear();
         totalPrice = 0f;
         currentCustomer = null; // Reset the current customer
@@ -80,6 +86,9 @@ public class CheckoutManager : MonoBehaviour
         // Reset the UI
         worldSpaceUI.ResetUI();
         Debug.Log("Cart reset.");
+
+        CheckoutTrigger checkoutTrigger = FindObjectOfType<CheckoutTrigger>();
+        checkoutTrigger.CompleteTransaction();
     }
 
     /// <summary>
@@ -126,6 +135,9 @@ public class CheckoutManager : MonoBehaviour
     {
         if (scannedItems.Contains(item))
         {
+            // Track overcharge mistake if the item is voided
+            shiftDataTracker.TrackMistake("CustomerOvercharged");
+
             scannedItems.Remove(item);
             totalPrice -= item.itemPrice;
 
@@ -140,6 +152,21 @@ public class CheckoutManager : MonoBehaviour
         else
         {
             Debug.Log("Item not found in scanned list.");
+        }
+    }
+
+    private void TrackMissedItems()
+    {
+        if (currentCustomer == null) return;
+
+        // Compare the ShoppingList to the scannedItems
+        int missedItems = currentCustomer.ShoppingList.Count - scannedItems.Count;
+
+        if (missedItems > 0)
+        {
+            // Track the undercharge mistake
+            shiftDataTracker.TrackMistake("CustomerUndercharged");
+            Debug.Log($"Missed scanning {missedItems} items for customer {currentCustomer.FullName}.");
         }
     }
 }
