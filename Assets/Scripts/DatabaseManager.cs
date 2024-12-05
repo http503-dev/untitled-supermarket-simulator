@@ -1,7 +1,8 @@
+using Firebase.Database;
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using Firebase.Database;
 using Firebase.Auth;
 using TMPro;
 using Firebase;
@@ -42,6 +43,8 @@ public class DatabaseManager : MonoBehaviour
     // Reset Password
     [SerializeField] private TMP_InputField resetPasswordEmailInputField;
     [SerializeField] private TextMeshProUGUI resetPasswordValidationText;
+
+    public LobbyMenu lobbyMenu;
     
     private void Awake()
     {
@@ -383,6 +386,76 @@ public class DatabaseManager : MonoBehaviour
         }
         return validationText;
     }
+    
+    // Game session listen method
+    public async Task GameSessionListen()
+    {
+        var sessionRef = reference.Child($"sessions/{auth.CurrentUser.UserId}");
+
+        try
+        {
+            var snapshot = await sessionRef.GetValueAsync();
+            if (snapshot == null)
+            {
+                Debug.LogError("Snapshot is null.");
+                return;
+            }
+
+            Debug.Log("Session snapshot received.");
+
+            if (!snapshot.Exists)
+            {
+                Debug.Log("Session does not exist. Creating it...");
+                var sessionData = new
+                {
+                    createdOn = ConvertNowToTimeStamp(),
+                    currentCustomerIndex = 0,
+                    gameConnected = false,
+                    webConnected = false,
+                    timeElapsed = 0
+                };
+
+                string json = JsonUtility.ToJson(sessionData);
+
+                Debug.Log(auth.CurrentUser.UserId);
+                await reference.Child("sessions").Child(auth.CurrentUser.UserId).SetRawJsonValueAsync(json);
+                
+                Debug.Log("Session created successfully.");
+            }
+            else
+            {
+                Debug.Log("Session already exists.");
+            }
+
+            // Listen for data changes
+            sessionRef.ValueChanged += (sender, args) =>
+            {
+                if (args.Snapshot.Exists)
+                {
+                    Debug.Log("Session data changed: " + args.Snapshot.GetRawJsonValue());
+                    Debug.Log(args.Snapshot.Child("gameConnected"));
+                    Debug.Log(args.Snapshot.Child("gameConnected").Value.ToString());
+                    bool gameConnected = bool.Parse(args.Snapshot.Child("gameConnected").Value.ToString());
+                    Debug.Log(gameConnected);
+                    lobbyMenu.ChangeWebReadyStatus(gameConnected);
+                }
+                else
+                {
+                    Debug.Log("Session data has been deleted.");
+                }
+            };
+        }
+        catch (FirebaseException firebaseError)
+        {
+            Debug.LogError("Firebase Error: " + firebaseError.Message);
+        }
+        catch (Exception error)
+        {
+            Debug.LogError("Error checking or creating session: " + error.Message);
+        }
+    }
+
+
     
     /// <summary>
     /// Converts current time to epoch timestamp

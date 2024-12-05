@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2920,7 +2920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.93333334, b: 0.76862746, a: 1}
+  m_Color: {r: 0.93333334, g: 0.19215687, b: 0.3254902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6113,7 +6113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1380923405
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6341,7 +6341,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1431981655
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7050,7 +7050,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Player 2: Web
 
-    Ready'
+    Not Ready'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7453,6 +7453,7 @@ MonoBehaviour:
   loginValidationText: {fileID: 649508050}
   resetPasswordEmailInputField: {fileID: 840536145}
   resetPasswordValidationText: {fileID: 1149670846}
+  lobbyMenu: {fileID: 1431981656}
 --- !u!4 &1918950276
 Transform:
   m_ObjectHideFlags: 0
