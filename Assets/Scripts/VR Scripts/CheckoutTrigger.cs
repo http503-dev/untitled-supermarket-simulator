@@ -25,6 +25,7 @@ public class CheckoutTrigger : MonoBehaviour
             // Spawn the customer's items
             CheckoutManager.Instance.SpawnItemsForCustomer(npcController.CustomerData);
 
+            // Send customer data to database
             spawner.SaveCustomerToDatabase(npcController.CustomerData);
 
             // Start the transaction timer

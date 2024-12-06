@@ -56,6 +56,10 @@ public class NPCSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to send customer data to database
+    /// </summary>
+    /// <param name="customer"></param>
     public void SaveCustomerToDatabase(CustomerData customer)
     {
         // Generate a unique key for the customer
