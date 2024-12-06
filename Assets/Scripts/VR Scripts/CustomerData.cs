@@ -13,29 +13,27 @@ public class CustomerData
     /// <summary>
     /// Customer 'stats'
     /// </summary>
-    public string FirstName;
-    public string LastName;
+    public string firstName;
+    public string lastName;
 
-    public List<ShoppingItem> ShoppingList = new List<ShoppingItem>();
+    public List<ShoppingItem> shoppingList = new List<ShoppingItem>();
 
-    public string FullName => $"{FirstName} {LastName}";
-    public DateTime DateOfBirth;
-    public int SpriteIndex; // Mugshot index
-    public DateTime ExpiryDate;
-    public bool IsBlacklisted;
+    public string fullName => $"{firstName} {lastName}";
+    public DateTime dateOfBirth;
+    public int spriteIndex; // Mugshot index
     public List<(string Name, float Price)> Groceries;
-    public float TotalPrice;
+    public float totalPrice;
 
 
-    public const int LegalAge = 18; // Minimum age for purchasing restricted items
+    public const int legalAge = 18; // Minimum age for purchasing restricted items
 
-    public bool IsUnderage
+    public bool isUnderage
     {
         get
         {
-            int age = DateTime.Now.Year - DateOfBirth.Year;
-            if (DateTime.Now.DayOfYear < DateOfBirth.DayOfYear) age--;
-            return age < LegalAge;
+            int age = DateTime.Now.Year - dateOfBirth.Year;
+            if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear) age--;
+            return age < legalAge;
         }
     }
 
@@ -57,16 +55,14 @@ public class CustomerData
     public string GetCustomerStats()
     {
         string stats = $"Customer Stats:\n" +
-                       $"Full Name: {FullName}\n" +
-                       $"Date of Birth: {DateOfBirth.ToShortDateString()}\n" +
-                       $"Sprite Index: {SpriteIndex}\n" +
-                       $"ID Expiry Date: {ExpiryDate.ToShortDateString()}\n" +
-                       $"Blacklisted: {IsBlacklisted}\n" +
-                       $"Total Price: ${TotalPrice:F2}\n" +
-                       $"Underage: {IsUnderage}\n" +
+                       $"Full Name: {fullName}\n" +
+                       $"Date of Birth: {dateOfBirth.ToShortDateString()}\n" +
+                       $"Sprite Index: {spriteIndex}\n" +
+                       $"Total Price: ${totalPrice:F2}\n" +
+                       $"Underage: {isUnderage}\n" +
                        $"Shopping List:";
 
-        foreach (var item in ShoppingList)
+        foreach (var item in shoppingList)
         {
             stats += $"\n - {item.itemName}: ${item.itemPrice:F2}";
         }

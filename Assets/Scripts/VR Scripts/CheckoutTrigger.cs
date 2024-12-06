@@ -11,6 +11,7 @@ public class CheckoutTrigger : MonoBehaviour
 {
     private float transactionStartTime; // Track the start time of each transaction
     public ShiftDataTracker shiftDataTracker; // Reference to ShiftDataTracker
+    public NPCSpawner spawner;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -24,9 +25,11 @@ public class CheckoutTrigger : MonoBehaviour
             // Spawn the customer's items
             CheckoutManager.Instance.SpawnItemsForCustomer(npcController.CustomerData);
 
+            spawner.SaveCustomerToDatabase(npcController.CustomerData);
+
             // Start the transaction timer
             transactionStartTime = Time.time;
-            Debug.Log($"Transaction started for customer: {npcController.CustomerData.FullName}");
+            Debug.Log($"Transaction started for customer: {npcController.CustomerData.fullName}");
         }
     }
 

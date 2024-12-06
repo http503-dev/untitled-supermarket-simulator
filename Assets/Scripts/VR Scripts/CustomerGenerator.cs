@@ -14,21 +14,24 @@ public class CustomerGenerator : MonoBehaviour
     /// <summary>
     /// List of possible first names
     /// </summary>
-    private static readonly List<string> FirstNames = new List<string> {
+    private static readonly List<string> firstNames = new List<string> {
         "Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Hank", "Ivy", "Jack"
     };
 
     /// <summary>
     /// List of possible last names
     /// </summary>
-    private static readonly List<string> LastNames = new List<string> {
+    private static readonly List<string> lastNames = new List<string> {
         "Smith", "Johnson", "Brown", "Taylor", "Anderson", "Lee", "Garcia", "Martinez", "Clark", "Walker"
     };
 
     /// <summary>
     /// Prefabs for all available items
     /// </summary>
-    public List<GameObject> itemPrefabs; 
+    public List<GameObject> itemPrefabs;
+
+
+    public Sprite[] mugshotSprites;
 
     /// <summary>
     /// Function to generate a random customer
@@ -38,12 +41,10 @@ public class CustomerGenerator : MonoBehaviour
     {
         var random = new System.Random();
 
-        string firstName = FirstNames[random.Next(FirstNames.Count)];
-        string lastName = LastNames[random.Next(LastNames.Count)];
+        string firstName = firstNames[random.Next(firstNames.Count)];
+        string lastName = lastNames[random.Next(lastNames.Count)];
         DateTime dateOfBirth = GenerateRandomDate(new DateTime(1960, 1, 1), new DateTime(2005, 12, 31));
-        int spriteIndex = random.Next(1, 11); // Assume 10 mugshots available
-        DateTime expiryDate = GenerateRandomDate(new DateTime(2023, 1, 1), new DateTime(2030, 12, 31));
-        bool isBlacklisted = random.Next(0, 2) == 1;
+        int spriteIndex = random.Next(0, mugshotSprites.Length); // Get random mugshot index
 
         // Generate shopping list
         List<ShoppingItem> shoppingList = GenerateShoppingList();
@@ -58,14 +59,12 @@ public class CustomerGenerator : MonoBehaviour
 
         return new CustomerData
         {
-            FirstName = firstName,
-            LastName = lastName,
-            DateOfBirth = dateOfBirth,
-            SpriteIndex = spriteIndex,
-            ExpiryDate = expiryDate,
-            IsBlacklisted = isBlacklisted,
-            ShoppingList = shoppingList,
-            TotalPrice = totalPrice
+            firstName = firstName,
+            lastName = lastName,
+            dateOfBirth = dateOfBirth,
+            spriteIndex = spriteIndex,
+            shoppingList = shoppingList,
+            totalPrice = totalPrice
         };
     }
 
@@ -91,7 +90,7 @@ public class CustomerGenerator : MonoBehaviour
                 shoppingList.Add(new ShoppingItem
                 {
                     itemName = barcodeItem.itemName,
-                    itemPrice = barcodeItem.itemPrice,
+                    itemPrice = Mathf.Round(barcodeItem.itemPrice * 100) / 100,
                     itemPrefab = prefab
                 });
             }

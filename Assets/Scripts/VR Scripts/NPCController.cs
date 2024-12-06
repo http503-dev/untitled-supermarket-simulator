@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NPCController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class NPCController : MonoBehaviour
     /// Reference to customer data class
     /// </summary>
     public CustomerData CustomerData;
+    public Image mugshotImage; // Reference to the UI Image component
 
     /// <summary>
     /// Function to initialize a customer
@@ -25,11 +27,10 @@ public class NPCController : MonoBehaviour
         // Assign customer attributes to visual elements
         Debug.Log($"NPC Created: {CustomerData}");
 
-        // Assign sprite index or other visual attributes
-    }
-
-    void Start()
-    {
-        // Add NPC-specific behaviors here
+        // Update mugshot image
+        if (mugshotImage != null)
+        {
+            mugshotImage.sprite = FindObjectOfType<CustomerGenerator>().mugshotSprites[customer.spriteIndex];
+        }
     }
 }

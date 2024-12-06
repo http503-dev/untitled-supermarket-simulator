@@ -50,7 +50,7 @@ public class CheckoutManager : MonoBehaviour
     public void AssignCustomer(CustomerData customer)
     {
         currentCustomer = customer;
-        Debug.Log($"Assigned customer: {customer.FullName}");
+        Debug.Log($"Assigned customer: {customer.fullName}");
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class CheckoutManager : MonoBehaviour
     {
         if (currentCustomer == null) return;
 
-        foreach (ShoppingItem shoppingItem in customer.ShoppingList)
+        foreach (ShoppingItem shoppingItem in customer.shoppingList)
         {
             if (shoppingItem.itemPrefab != null)
             {
@@ -160,13 +160,13 @@ public class CheckoutManager : MonoBehaviour
         if (currentCustomer == null) return;
 
         // Compare the ShoppingList to the scannedItems
-        int missedItems = currentCustomer.ShoppingList.Count - scannedItems.Count;
+        int missedItems = currentCustomer.shoppingList.Count - scannedItems.Count;
 
         if (missedItems > 0)
         {
             // Track the undercharge mistake
             shiftDataTracker.TrackMistake("CustomerUndercharged");
-            Debug.Log($"Missed scanning {missedItems} items for customer {currentCustomer.FullName}.");
+            Debug.Log($"Missed scanning {missedItems} items for customer {currentCustomer.fullName}.");
         }
     }
 }

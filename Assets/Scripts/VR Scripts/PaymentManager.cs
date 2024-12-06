@@ -192,7 +192,7 @@ public class PaymentManager : MonoBehaviour
         }
 
         // Check for restricted sales
-        if (checkoutManager.currentCustomer != null && checkoutManager.currentCustomer.IsUnderage)
+        if (checkoutManager.currentCustomer != null && checkoutManager.currentCustomer.isUnderage)
         {
             foreach (var item in checkoutManager.scannedItems)
             {
