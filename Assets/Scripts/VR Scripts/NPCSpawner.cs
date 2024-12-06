@@ -5,6 +5,7 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class NPCSpawner : MonoBehaviour
     public Transform spawnPoint; // Where NPCs will spawn
     public CustomerGenerator customerGenerator; // Reference to Customer Generator
     private DatabaseReference databaseReference; // Firebase reference
+    private FirebaseAuth auth;
+    private FirebaseUser user;
 
     /// <summary>
     /// Function to call the SpawnNPC function on start (and to set how many to spawn)
@@ -25,6 +28,8 @@ public class NPCSpawner : MonoBehaviour
     {
         // Initialize Firebase reference
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        auth = FirebaseAuth.DefaultInstance;
+        user = auth.CurrentUser;
 
         // Spawn 1 random NPCs at the start
         for (int i = 0; i < 1; i++)
@@ -62,9 +67,6 @@ public class NPCSpawner : MonoBehaviour
     /// <param name="customer"></param>
     public void SaveCustomerToDatabase(CustomerData customer)
     {
-        // Generate a unique key for the customer
-        string customerKey = databaseReference.Child("customers").Push().Key;
-
         // Convert CustomerData to a Dictionary for Firebase
         Dictionary<string, object> customerData = new Dictionary<string, object>
         {
@@ -88,7 +90,7 @@ public class NPCSpawner : MonoBehaviour
         customerData["shoppingList"] = shoppingListData;
 
         // Push the customer data to Firebase
-        databaseReference.Child("customers").Child(customerKey).SetValueAsync(customerData).ContinueWithOnMainThread(task =>
+        databaseReference.Child("sessions").Child(user.UserId).Child("customer").SetValueAsync(customerData).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
