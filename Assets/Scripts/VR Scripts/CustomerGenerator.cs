@@ -30,7 +30,9 @@ public class CustomerGenerator : MonoBehaviour
     /// </summary>
     public List<GameObject> itemPrefabs;
 
-
+    /// <summary>
+    /// Array of mugshot for IDs
+    /// </summary>
     public Sprite[] mugshotSprites;
 
     /// <summary>
@@ -45,6 +47,7 @@ public class CustomerGenerator : MonoBehaviour
         string lastName = lastNames[random.Next(lastNames.Count)];
         DateTime dateOfBirth = GenerateRandomDate(new DateTime(1960, 1, 1), new DateTime(2005, 12, 31));
         int spriteIndex = random.Next(0, mugshotSprites.Length); // Get random mugshot index
+        bool isFake = random.Next(0, 2) == 1;
 
         // Generate shopping list
         List<ShoppingItem> shoppingList = GenerateShoppingList();
@@ -64,7 +67,8 @@ public class CustomerGenerator : MonoBehaviour
             dateOfBirth = dateOfBirth,
             spriteIndex = spriteIndex,
             shoppingList = shoppingList,
-            totalPrice = totalPrice
+            totalPrice = totalPrice,
+            isFake = isFake
         };
     }
 

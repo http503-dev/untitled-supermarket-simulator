@@ -74,7 +74,8 @@ public class NPCSpawner : MonoBehaviour
             { "dateOfBirth", customer.dateOfBirth.ToString("yyyy-MM-dd") },
             { "spriteIndex", customer.spriteIndex },
             { "totalPrice", customer.totalPrice },
-            { "isUnderage", customer.isUnderage }
+            { "isUnderage", customer.isUnderage },
+            { "isFake", customer.isFake }
         };
 
         // Add the shopping list to the customer data
