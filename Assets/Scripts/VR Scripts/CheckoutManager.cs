@@ -5,6 +5,7 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static CustomerData;
 
@@ -51,6 +52,7 @@ public class CheckoutManager : MonoBehaviour
     {
         currentCustomer = customer;
         Debug.Log($"Assigned customer: {customer.fullName}");
+        worldSpaceUI.ShowRejectCustomerButton();
     }
 
     /// <summary>
@@ -155,6 +157,9 @@ public class CheckoutManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to track missed items
+    /// </summary>
     private void TrackMissedItems()
     {
         if (currentCustomer == null) return;
@@ -167,6 +172,32 @@ public class CheckoutManager : MonoBehaviour
             // Track the undercharge mistake
             shiftDataTracker.TrackMistake("CustomerUndercharged");
             Debug.Log($"Missed scanning {missedItems} items for customer {currentCustomer.fullName}.");
+        }
+    }
+
+    public void RejectCustomer()
+    {
+        if (currentCustomer != null)
+        {
+            if (currentCustomer.isFake ||
+                (currentCustomer.isUnderage && scannedItems.Any(item => item.isRestricted)))
+            {
+                // Valid rejection
+                Debug.Log($"Customer {currentCustomer.fullName} rejected for valid reasons (Fake ID or underage).");
+            }
+            else
+            {
+                // Invalid rejection
+                shiftDataTracker.TrackMistake("InvalidRejection");
+                Debug.Log($"Customer {currentCustomer.fullName} rejected without valid reason.");
+            }
+
+            // Reset for the next customer
+            ResetCart();
+        }
+        else
+        {
+            Debug.LogWarning("No customer to reject.");
         }
     }
 }

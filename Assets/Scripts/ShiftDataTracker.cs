@@ -33,6 +33,8 @@ public class ShiftDataTracker : MonoBehaviour
     private float averageTimePerTransaction = 480f; // Default 480 seconds
     private int highScore = 0;
     private int proficiencyScore = 0;
+    private int transactionsToInvalidID = 0;
+    private int invalidRejections = 0;
 
     /// <summary>
     /// Dictionary to store data from database
@@ -112,6 +114,10 @@ public class ShiftDataTracker : MonoBehaviour
                             ? int.Parse(snapshot.Child("mistakesMade/customersUndercharged").Value.ToString()) : 0,
                         ["insufficientCustomerPayment"] = snapshot.Child("mistakesMade/insufficientCustomerPayment").Value != null
                             ? int.Parse(snapshot.Child("mistakesMade/insufficientCustomerPayment").Value.ToString()) : 0,
+                        ["transactionsToInvalidID"] = snapshot.Child("mistakesMade/transactionsToInvalidID").Value != null
+                            ? int.Parse(snapshot.Child("mistakesMade/transactionsToInvalidID").Value.ToString()) : 0,
+                        ["invalidRejections"] = snapshot.Child("mistakesMade/invalidRejections").Value != null
+                            ? int.Parse(snapshot.Child("mistakesMade/invalidRejections").Value.ToString()) : 0,
                     };
                 }
                 else
@@ -124,6 +130,8 @@ public class ShiftDataTracker : MonoBehaviour
                         ["customersOvercharged"] = 0,
                         ["customersUndercharged"] = 0,
                         ["insufficientCustomerPayment"] = 0, //
+                        ["transactionsToInvalidID"] = 0, //
+                        ["invalidRejections"] = 0,
                     };
                 }
 
@@ -207,6 +215,14 @@ public class ShiftDataTracker : MonoBehaviour
                 customerUndercharged++;
                 Debug.Log("Customer was undercharged.");
                 break;
+            case "TransactionsToInvalidID":
+                transactionsToInvalidID++;
+                Debug.Log("Customer has fake ID");
+                break;
+            case "InvalidRejection":
+                invalidRejections++;
+                Debug.Log("Invalid rejection detected.");
+                break;
         }
     }
 
@@ -258,7 +274,9 @@ public class ShiftDataTracker : MonoBehaviour
             ["insufficientChangeGiven"] = snapshotMistakes["insufficientChangeGiven"] + insufficientChangeGiven,
             ["customersOvercharged"] = snapshotMistakes["customersOvercharged"] + customerOvercharged,
             ["customersUndercharged"] = snapshotMistakes["customersUndercharged"] + customerUndercharged,
-            ["insufficientCustomerPayment"] = snapshotMistakes["insufficientCustomerPayment"] + insufficientCustomerPayment
+            ["insufficientCustomerPayment"] = snapshotMistakes["insufficientCustomerPayment"] + insufficientCustomerPayment,
+            ["transactionsToInvalidID"] = snapshotMistakes["transactionsToInvalidID"] + transactionsToInvalidID,
+            ["invalidRejections"] = snapshotMistakes["invalidRejections"] + invalidRejections
         };
 
         // Prepare the data for updating
@@ -315,5 +333,7 @@ public class ShiftDataTracker : MonoBehaviour
         totalTimeSpent = 0f;
         averageTimePerTransaction = 480f;
         proficiencyScore = 0;
+        transactionsToInvalidID = 0;
+        invalidRejections = 0;
     }
 }

@@ -204,6 +204,12 @@ public class PaymentManager : MonoBehaviour
             }
         }
 
+        if (checkoutManager.currentCustomer != null && checkoutManager.currentCustomer.isFake)
+        {
+            shiftDataTracker.TrackMistake("TransactionToInvalidID");
+            Debug.Log("Transaction completed with a fake ID.");
+        }
+
         Debug.Log($"Player grabbed a total of: ${totalGrabbed:F2}");
 
         // Reset the state for the next transaction

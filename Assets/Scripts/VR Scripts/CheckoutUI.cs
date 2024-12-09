@@ -5,6 +5,7 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -19,13 +20,13 @@ public class CheckoutUI : MonoBehaviour
     public TextMeshProUGUI underpaymentText;
     public Transform scannedItemsList;
 
+    public GameObject requestMoreCashButton; // Button to request more cash
+    public GameObject rejectCustomerButton; // Button to reject the customer
+
     /// <summary>
     /// A prefab for displaying scanned items in the UI
     /// </summary>
     public GameObject scannedItemPrefab;
-
-
-    public GameObject requestMoreCashButton; // Button to request more cash
 
     /// <summary>
     /// Function to update total price text
@@ -114,6 +115,21 @@ public class CheckoutUI : MonoBehaviour
     }
 
     /// <summary>
+    /// Function on what happens on hitting reject button
+    /// </summary>
+    public void OnRejectCustomerButtonPressed()
+    {
+        CheckoutManager checkoutManager = FindObjectOfType<CheckoutManager>();
+        if (checkoutManager != null)
+        {
+            checkoutManager.RejectCustomer(); // Call the rejection logic
+        }
+        HideRejectCustomerButton(); // Hide the button after rejection
+        checkoutManager.ResetCart();
+        ResetUI();
+    }
+
+    /// <summary>
     /// Function to reset UI
     /// </summary>
     public void ResetUI()
@@ -129,14 +145,35 @@ public class CheckoutUI : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Function to show request more button
+    /// </summary>
     public void ShowRequestMoreCashButton()
     {
         requestMoreCashButton.SetActive(true);
     }
 
+    /// <summary>
+    /// Function to hide request more button
+    /// </summary>
     public void HideRequestMoreCashButton()
     {
         requestMoreCashButton.SetActive(false);
+    }
+
+    /// <summary>
+    /// Function to show the reject button
+    /// </summary>
+    public void ShowRejectCustomerButton()
+    {
+        rejectCustomerButton.SetActive(true);
+    }
+
+    /// <summary>
+    /// Function to hide the reject button
+    /// </summary>
+    public void HideRejectCustomerButton()
+    {
+        rejectCustomerButton.SetActive(false);
     }
 }
