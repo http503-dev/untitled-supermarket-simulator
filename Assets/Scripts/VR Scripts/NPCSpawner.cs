@@ -14,7 +14,6 @@ public class NPCSpawner : MonoBehaviour
     /// <summary>
     /// References to prefabs, spawn point and customer generator script
     /// </summary>
-    public GameObject npcPrefab; // Assign NPC prefab here
     public Transform spawnPoint; // Where NPCs will spawn
     public CustomerGenerator customerGenerator; // Reference to Customer Generator
     private DatabaseReference databaseReference; // Firebase reference
@@ -34,13 +33,12 @@ public class NPCSpawner : MonoBehaviour
         // Spawn 1 random NPCs at the start
         for (int i = 0; i < 1; i++)
         {
-            CustomerData customer = customerGenerator.GenerateCustomer();
-            SpawnNPC(customer);
+            // Generate customer data with the corresponding prefab
+            var (customer, customerPrefab) = customerGenerator.GenerateCustomer();
+            SpawnNPC(customer, customerPrefab);
+
             // Log the customer's stats
             Debug.Log(customer.GetCustomerStats());
-
-            // Push customer data to Firebase
-            //SaveCustomerToDatabase(customer);
         }
     }
 
@@ -48,10 +46,10 @@ public class NPCSpawner : MonoBehaviour
     /// Function to spawn customer 
     /// </summary>
     /// <param name="customer"></param>
-    public void SpawnNPC(CustomerData customer)
+    public void SpawnNPC(CustomerData customer, GameObject customerPrefab)
     {
         // Instantiate the NPC at the spawn point
-        GameObject npc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation);
+        GameObject npc = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
 
         // Initialize the NPC with customer data
         NPCController npcController = npc.GetComponent<NPCController>();

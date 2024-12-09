@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static CustomerData;
+using static SessionData;
 
 public class CustomerGenerator : MonoBehaviour
 {
@@ -36,10 +37,15 @@ public class CustomerGenerator : MonoBehaviour
     public Sprite[] mugshotSprites;
 
     /// <summary>
+    /// Prefabs that match the mugshot sprites
+    /// </summary>
+    public List<GameObject> customerPrefabs;
+
+    /// <summary>
     /// Function to generate a random customer
     /// </summary>
     /// <returns></returns>
-    public CustomerData GenerateCustomer()
+    public (CustomerData, GameObject) GenerateCustomer()
     {
         var random = new System.Random();
 
@@ -59,8 +65,11 @@ public class CustomerGenerator : MonoBehaviour
             totalPrice += item.itemPrice;
         }
 
+        // Match the prefab to the sprite index
+        GameObject customerPrefab = customerPrefabs[spriteIndex];
 
-        return new CustomerData
+        // Create the customer data
+        CustomerData customer = new CustomerData
         {
             firstName = firstName,
             lastName = lastName,
@@ -70,6 +79,8 @@ public class CustomerGenerator : MonoBehaviour
             totalPrice = totalPrice,
             isFake = isFake
         };
+
+        return (customer, customerPrefab);
     }
 
     /// <summary>
