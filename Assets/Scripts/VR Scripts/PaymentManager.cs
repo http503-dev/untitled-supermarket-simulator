@@ -73,7 +73,7 @@ public class PaymentManager : MonoBehaviour
         customerPayment = scannedTotal + Random.Range(-1f, 5f); // Adjust range as needed
         customerPayment = Mathf.Max(0, customerPayment); // Ensure no negative cash is offered
 
-        Debug.Log($"Customer offers: ${customerPayment:F2}");
+        Debug.Log($"Customer offers: ${customerPayment}");
         checkoutUI.UpdatePayment(customerPayment);
 
         // Handle payment scenarios
@@ -93,7 +93,7 @@ public class PaymentManager : MonoBehaviour
     private void HandleUnderpayment()
     {
         float amountNeeded = checkoutManager.totalPrice - customerPayment;
-        Debug.Log($"Underpayment detected. Customer owes: ${amountNeeded:F2}");
+        Debug.Log($"Underpayment detected. Customer owes: ${amountNeeded}");
         checkoutUI.DisplayUnderpayment(amountNeeded);
         checkoutUI.ShowRequestMoreCashButton();
     }
@@ -108,7 +108,7 @@ public class PaymentManager : MonoBehaviour
         float additionalCash = Random.Range(1f, 10f); // Adjust range as needed
         customerPayment += additionalCash;
 
-        Debug.Log($"Customer hands over additional cash: ${additionalCash:F2}");
+        Debug.Log($"Customer hands over additional cash: ${additionalCash}");
         checkoutUI.UpdatePayment(customerPayment);
 
         if (customerPayment >= checkoutManager.totalPrice)
@@ -127,7 +127,7 @@ public class PaymentManager : MonoBehaviour
     private void HandleChange()
     {
         change = customerPayment - checkoutManager.totalPrice;
-        Debug.Log($"Overpayment detected. Change to give: ${change:F2}");
+        Debug.Log($"Overpayment detected. Change to give: ${change}");
         checkoutUI.DisplayChange(change);
     }
 
@@ -210,7 +210,7 @@ public class PaymentManager : MonoBehaviour
             Debug.Log("Transaction completed with a fake ID.");
         }
 
-        Debug.Log($"Player grabbed a total of: ${totalGrabbed:F2}");
+        Debug.Log($"Player grabbed a total of: ${totalGrabbed}");
 
         // Reset the state for the next transaction
         cashRegister.SetActive(false);

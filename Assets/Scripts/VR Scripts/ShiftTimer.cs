@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Firebase.Auth;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ShiftTimer : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class ShiftTimer : MonoBehaviour
     /// </summary>
     public float shiftDuration = 480f; // 8 minutes in seconds
     public TextMeshProUGUI clockText; // Link a UI Text element for displaying the virtual clock
+    public GameObject mainMenuButton;
+    public GameObject newShiftButton;
 
     /// <summary>
     /// To track elapsed time and whther there is a shift
@@ -40,6 +44,9 @@ public class ShiftTimer : MonoBehaviour
             Debug.LogError("User ID not found. Ensure the user is authenticated.");
             return;
         }
+
+        mainMenuButton.SetActive(false);
+        newShiftButton.SetActive(false);
 
         elapsedTime = 0f;
         isShiftActive = true;
@@ -89,6 +96,19 @@ public class ShiftTimer : MonoBehaviour
         // Finalize stats in ShiftDataTracker
         shiftDataTracker.EndShift(userId);
 
+        mainMenuButton.SetActive(true);
+        newShiftButton.SetActive(true);
+
         Debug.Log("Shift ended successfully.");
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void StartNewShift()
+    {
+        SceneManager.LoadScene("Supermarket");
     }
 }
