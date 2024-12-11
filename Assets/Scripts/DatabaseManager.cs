@@ -229,6 +229,8 @@ public class DatabaseManager : MonoBehaviour
                     {
                         loginScreen.SetActive(false);
                         homeScreen.SetActive(true);
+                        //Remove on build
+                        SceneManager.LoadScene("Supermarket");
                         ResetFields();
                     }
 
