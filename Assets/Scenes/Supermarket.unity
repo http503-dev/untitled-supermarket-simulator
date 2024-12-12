@@ -12498,7 +12498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5932091c1324b048815ca82575fa5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shiftDuration: 60
+  shiftDuration: 40
   clockText: {fileID: 989078707}
   mainMenuButton: {fileID: 370049915}
   newShiftButton: {fileID: 413455443}

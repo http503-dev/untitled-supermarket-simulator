@@ -229,8 +229,6 @@ public class DatabaseManager : MonoBehaviour
                     {
                         loginScreen.SetActive(false);
                         homeScreen.SetActive(true);
-                        //Remove on build
-                        SceneManager.LoadScene("Supermarket");
                         ResetFields();
                     }
 
@@ -455,8 +453,16 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+    public Task UpdateVRReadyStatus(bool status)
+    {
+        var updates = new Dictionary<string, object>
+        {
+            { $"/sessions/{auth.CurrentUser.UserId}/gameConnected", status }
+        };
 
-    
+        return reference.UpdateChildrenAsync(updates);
+    }
+
     /// <summary>
     /// Converts current time to epoch timestamp
     /// </summary>
