@@ -33,6 +33,7 @@ public class CheckoutManager : MonoBehaviour
     public CheckoutUI worldSpaceUI; // Reference to the UI script for displaying information
 
     private List<GameObject> spawnedItems = new List<GameObject>();
+    public bool IsCheckoutBusy => currentCustomer != null;
 
     void Awake()
     {
@@ -92,6 +93,21 @@ public class CheckoutManager : MonoBehaviour
 
         scannedItems.Clear();
         totalPrice = 0f;
+
+        // Notify the current customer to exit
+        if (currentCustomer != null)
+        {
+            GameObject currentNpc = currentCustomer.npcGameObject; // Assuming you keep track of the NPC GameObject in CustomerData
+            if (currentNpc != null)
+            {
+                NPCController npcController = currentNpc.GetComponent<NPCController>();
+                if (npcController != null)
+                {
+                    npcController.ExitStore(); // Transition to exiting state
+                }
+            }
+        }
+
         currentCustomer = null; // Reset the current customer
 
         // Reset the UI
@@ -100,6 +116,10 @@ public class CheckoutManager : MonoBehaviour
 
         CheckoutTrigger checkoutTrigger = FindObjectOfType<CheckoutTrigger>();
         checkoutTrigger.CompleteTransaction();
+
+        // Notify QueueManager to serve the next customer
+        FindObjectOfType<QueueManager>().ServeNextCustomer();
+
     }
 
     /// <summary>

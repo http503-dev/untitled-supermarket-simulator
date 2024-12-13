@@ -24,6 +24,7 @@ public class CustomerData
     public List<(string Name, float Price)> Groceries;
     public float totalPrice;
     public bool isFake;
+    public GameObject npcGameObject; // Reference to the NPC GameObject
 
 
     public const int legalAge = 18; // Minimum age for purchasing restricted items

@@ -844,6 +844,7 @@ GameObject:
   - component: {fileID: -4720535539113630595}
   - component: {fileID: -1263515881259386630}
   - component: {fileID: 7724675674845745463}
+  - component: {fileID: 7228822117113069571}
   m_Layer: 0
   m_Name: casual_Female_G
   m_TagString: Untagged
@@ -860,7 +861,7 @@ Transform:
   m_GameObject: {fileID: 6584613354768528393}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 17.420933, y: -0.000002861023, z: 2.378747}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -916,6 +917,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mugshotImage: {fileID: 0}
+  currentState: 0
+  waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!54 &7724675674845745463
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -943,6 +951,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!195 &7228822117113069571
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6584613354768528393}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &6646269780412227657
 GameObject:
   m_ObjectHideFlags: 0

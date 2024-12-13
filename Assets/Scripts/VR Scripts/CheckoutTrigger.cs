@@ -13,24 +13,26 @@ public class CheckoutTrigger : MonoBehaviour
     public ShiftDataTracker shiftDataTracker; // Reference to ShiftDataTracker
     public NPCSpawner spawner;
 
+    /// <summary>
+    /// Reference to set queueing npcs to an array
+    /// </summary>
+    public Queue<NPCController> queue = new Queue<NPCController>();
+    private bool isCheckoutBusy = false;
+
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the object entering the trigger is a customer
         NPCController npcController = other.GetComponent<NPCController>();
-        if (npcController != null)
+        if (npcController != null && npcController.currentState == NPCController.NPCState.Checkout)
         {
-            // Assign the customer to the CheckoutManager
-            CheckoutManager.Instance.AssignCustomer(npcController.CustomerData);
-
-            // Spawn the customer's items
-            CheckoutManager.Instance.SpawnItemsForCustomer(npcController.CustomerData);
-
-            // Send customer data to database
-            spawner.SaveCustomerToDatabase(npcController.CustomerData);
-
-            // Start the transaction timer
-            transactionStartTime = Time.time;
-            Debug.Log($"Transaction started for customer: {npcController.CustomerData.fullName}");
+            if (isCheckoutBusy)
+            {
+                queue.Enqueue(npcController);
+                Debug.Log($"{npcController.CustomerData.fullName} is waiting in the queue.");
+            }
+            else
+            {
+                ServeCustomer(npcController);
+            }
         }
     }
 
@@ -46,5 +48,35 @@ public class CheckoutTrigger : MonoBehaviour
         shiftDataTracker.CompleteTransaction(transactionDuration);
 
         Debug.Log($"Transaction completed. Duration: {transactionDuration:F2} seconds.");
+
+        isCheckoutBusy = false;
+
+        if (queue.Count > 0)
+        {
+            NPCController nextNpc = queue.Dequeue();
+            ServeCustomer(nextNpc);
+        }
+    }
+
+    /// <summary>
+    /// Function to start serving the customer 
+    /// </summary>
+    /// <param name="npc"></param>
+    public void ServeCustomer(NPCController npc)
+    {
+        isCheckoutBusy = true;
+
+        // Assign the customer to the CheckoutManager
+        CheckoutManager.Instance.AssignCustomer(npc.CustomerData);
+
+        // Spawn the customer's items
+        CheckoutManager.Instance.SpawnItemsForCustomer(npc.CustomerData);
+
+        // Send customer data to database
+        spawner.SaveCustomerToDatabase(npc.CustomerData);
+
+        // Start the transaction timer
+        transactionStartTime = Time.time;
+        Debug.Log($"Transaction started for customer: {npc.CustomerData.fullName}");
     }
 }

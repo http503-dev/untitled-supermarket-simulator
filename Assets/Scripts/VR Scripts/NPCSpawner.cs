@@ -15,6 +15,12 @@ public class NPCSpawner : MonoBehaviour
     /// References to prefabs, spawn point and customer generator script
     /// </summary>
     public Transform spawnPoint; // Where NPCs will spawn
+    public Transform[] waypoints;
+    public float minSpawnInterval = 2f; // Minimum time between spawns
+    public float maxSpawnInterval = 5f; // Maximum time between spawns
+    public int maxNPC = 10; // Maximum number of NPCs in the store
+    private int currentNPCCount = 0;
+
     public CustomerGenerator customerGenerator; // Reference to Customer Generator
     private DatabaseReference databaseReference; // Firebase reference
     private FirebaseAuth auth;
@@ -30,15 +36,34 @@ public class NPCSpawner : MonoBehaviour
         auth = FirebaseAuth.DefaultInstance;
         user = auth.CurrentUser;
 
-        // Spawn 1 random NPCs at the start
-        for (int i = 0; i < 1; i++)
-        {
-            // Generate customer data with the corresponding prefab
-            var (customer, customerPrefab) = customerGenerator.GenerateCustomer();
-            SpawnNPC(customer, customerPrefab);
+        // Start the NPC spawning coroutine
+        StartCoroutine(SpawnNPCsRandomly());
+    }
 
-            // Log the customer's stats
-            Debug.Log(customer.GetCustomerStats());
+    /// <summary>
+    /// Coroutine to spawn npcs randomly
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SpawnNPCsRandomly()
+    {
+        while (true)
+        {
+            // Check if we can spawn more NPCs
+            if (currentNPCCount < maxNPC)
+            {
+                // Generate a new customer
+                var (customer, customerPrefab) = customerGenerator.GenerateCustomer();
+
+                // Spawn the NPC
+                SpawnNPC(customer, customerPrefab);
+
+                // Increment the NPC count
+                currentNPCCount++;
+            }
+
+            // Wait for a random interval before spawning the next NPC
+            float interval = Random.Range(minSpawnInterval, maxSpawnInterval);
+            yield return new WaitForSeconds(interval);
         }
     }
 
@@ -51,12 +76,25 @@ public class NPCSpawner : MonoBehaviour
         // Instantiate the NPC at the spawn point
         GameObject npc = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
 
+        // Assign the NPC GameObject to CustomerData
+        customer.npcGameObject = npc;
+
         // Initialize the NPC with customer data
         NPCController npcController = npc.GetComponent<NPCController>();
         if (npcController != null)
         {
+            npcController.waypoints = waypoints; // Assign waypoints to NPC
             npcController.Initialize(customer);
+
+            // Handle NPC exiting
+            npcController.OnNPCExit += HandleNPCExit;
         }
+    }
+    private void HandleNPCExit(GameObject npc)
+    {
+        // Decrement NPC count when one exits the store
+        currentNPCCount--;
+        Debug.Log($"NPC exited. Remaining NPCs: {currentNPCCount}");
     }
 
     /// <summary>
