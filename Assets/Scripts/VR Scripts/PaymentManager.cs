@@ -43,6 +43,8 @@ public class PaymentManager : MonoBehaviour
     /// </summary>
     public readonly float[] denominations = { 20.0f, 10.0f, 5.0f, 2.0f, 1.0f, 0.50f, 0.20f, 0.10f, 0.05f, 0.01f };
 
+    private List<GameObject> instantiatedCash = new List<GameObject>();
+
     /// <summary>
     /// Get the CheckoutManager reference
     /// </summary>
@@ -148,7 +150,10 @@ public class PaymentManager : MonoBehaviour
             // Instantiate the cash prefab at the spawn point
             GameObject cashObject = Instantiate(cashPrefabEntry.cashPrefab, cashSpawnPoint.position, Quaternion.identity);
 
-            // Optionally, you can add some offset to stack the cash objects or animate them
+            // Add the cash object to the list
+            instantiatedCash.Add(cashObject);
+
+            // Optionally, you can add some offset to stack the cash objects
             cashObject.transform.position += new Vector3(grabbedCash.Count * 0.1f, 0, 0); // Adjust for stacking
 
             Debug.Log($"Cash object for ${denomination} instantiated.");
@@ -157,6 +162,18 @@ public class PaymentManager : MonoBehaviour
         {
             Debug.LogWarning($"No prefab found for denomination ${denomination}.");
         }
+    }
+
+    /// <summary>
+    /// Function to clear instantiated cash
+    /// </summary>
+    public void ClearInstantiatedCash()
+    {
+        foreach (GameObject cashObject in instantiatedCash)
+        {
+            Destroy(cashObject);
+        }
+        instantiatedCash.Clear(); // Clear the list for the next transaction
     }
 
     /// <summary>
@@ -213,6 +230,7 @@ public class PaymentManager : MonoBehaviour
         Debug.Log($"Player grabbed a total of: ${totalGrabbed}");
 
         // Reset the state for the next transaction
+        ClearInstantiatedCash(); // Clear the instantiated cash objects
         cashRegister.SetActive(false);
         checkoutManager.ResetCart(); // Reset for next customer
         checkoutUI.ResetUI();

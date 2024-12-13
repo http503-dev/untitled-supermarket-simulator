@@ -32,6 +32,8 @@ public class CheckoutManager : MonoBehaviour
 
     public CheckoutUI worldSpaceUI; // Reference to the UI script for displaying information
 
+    private List<GameObject> spawnedItems = new List<GameObject>();
+
     void Awake()
     {
         if (Instance == null)
@@ -81,6 +83,13 @@ public class CheckoutManager : MonoBehaviour
         // Track missed scanned items
         TrackMissedItems();
 
+        // Destroy all spawned grocery items
+        foreach (GameObject item in spawnedItems)
+        {
+            Destroy(item);
+        }
+        spawnedItems.Clear(); // Clear the list for the next customer
+
         scannedItems.Clear();
         totalPrice = 0f;
         currentCustomer = null; // Reset the current customer
@@ -111,6 +120,9 @@ public class CheckoutManager : MonoBehaviour
                     spawnPoint.position + new Vector3(currentOffset, 0, 0),
                     Quaternion.identity
                 );
+
+                // Add the item to the spawnedItems list
+                spawnedItems.Add(item);
 
                 // Assign the item properties dynamically
                 BarcodeItem barcodeItem = item.GetComponent<BarcodeItem>();
@@ -175,6 +187,9 @@ public class CheckoutManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function to reject customer
+    /// </summary>
     public void RejectCustomer()
     {
         if (currentCustomer != null)

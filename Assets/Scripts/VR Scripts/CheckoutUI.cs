@@ -125,7 +125,6 @@ public class CheckoutUI : MonoBehaviour
             checkoutManager.RejectCustomer(); // Call the rejection logic
         }
         HideRejectCustomerButton(); // Hide the button after rejection
-        checkoutManager.ResetCart();
         ResetUI();
     }
 

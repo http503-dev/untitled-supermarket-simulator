@@ -463,6 +463,30 @@ public class DatabaseManager : MonoBehaviour
         return reference.UpdateChildrenAsync(updates);
     }
 
+    public async void QuitGame()
+    {
+        if (auth.CurrentUser != null)
+        {
+            string userId = auth.CurrentUser.UserId;
+
+            try
+            {
+                // Reference to the UID node under sessions
+                var sessionRef = reference.Child($"sessions/{userId}");
+                await sessionRef.RemoveValueAsync();
+
+                Debug.Log($"Session for user {userId} deleted successfully.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error deleting session for user {userId}: {e.Message}");
+            }
+        }
+
+        // Exit the application
+        Application.Quit();
+    }
+
     /// <summary>
     /// Converts current time to epoch timestamp
     /// </summary>
