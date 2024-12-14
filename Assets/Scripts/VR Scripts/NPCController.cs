@@ -30,14 +30,23 @@ public class NPCController : MonoBehaviour
 
     public Transform[] waypoints; // Assign waypoints: Entrance, Aisles, Queue, Checkout, Exit
 
+    private Animator animator;
+
     /// <summary>
     /// Assign the npc as nav mesh agent
     /// </summary>
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
     }
-
+    void Update()
+    {
+        // Check if the NPC is walking
+        bool isMoving = agent.velocity.magnitude > 0.1f;
+        animator.SetBool("isWalking", isMoving);
+        SetWalking(isMoving);
+    }
     /// <summary>
     /// Function to initialize a customer
     /// </summary>
@@ -70,14 +79,15 @@ public class NPCController : MonoBehaviour
             switch (currentState)
             {
                 case NPCState.Entering:
-                    MoveTo(waypoints[0]); // Entrance
+                    StartWalkingTo(waypoints[0]); // Move to Entrance
                     yield return WaitForArrival();
+                    // Wait a couple of seconds after arriving
+                    //yield return new WaitForSeconds(4f); // 2 seconds delay
                     currentState = NPCState.Shopping;
                     break;
 
                 case NPCState.Shopping:
-                    // Walk through shopping aisles
-                    MoveTo(waypoints[1]); // Aisles
+                    StartWalkingTo(waypoints[1]); // Move to Aisles
                     yield return WaitForArrival();
                     yield return new WaitForSeconds(shoppingTime); // Simulate shopping
                     currentState = NPCState.Queueing;
@@ -87,29 +97,27 @@ public class NPCController : MonoBehaviour
                     if (!inQueue)
                     {
                         inQueue = true;
-                        MoveTo(waypoints[2]); // Queue area
+                        StartWalkingTo(waypoints[2]); // Move to Queue area
                         yield return WaitForArrival();
-                        FindObjectOfType<QueueManager>().AddToQueue(this);
+                        FindObjectOfType<QueueManager>().AddToQueue(this); // Add to queue
                     }
 
-                    // Wait in queue until assigned to checkout
+                    // Idle in queue
                     yield return new WaitForSeconds(0.5f);
                     break;
 
                 case NPCState.Checkout:
-                    MoveTo(waypoints[3]); // Checkout
+                    StartWalkingTo(waypoints[3]); // Move to Checkout
                     yield return WaitForArrival();
 
                     // CheckoutTrigger will handle interaction
                     yield break;
 
                 case NPCState.Exiting:
-                    MoveTo(waypoints[4]); // Exit
+                    StartWalkingTo(waypoints[4]); // Move to Exit
                     yield return WaitForArrival();
-
-                    // Notify the spawner and destroy the NPC
-                    OnNPCExit?.Invoke(gameObject);
-                    Destroy(gameObject); // Remove NPC from scene
+                    OnNPCExit?.Invoke(gameObject); // Notify spawner
+                    Destroy(gameObject); // Remove NPC
                     yield break;
             }
         }
@@ -131,22 +139,22 @@ public class NPCController : MonoBehaviour
     {
         currentState = NPCState.Exiting; // Set state to Exiting
         Debug.Log($"{CustomerData.fullName} is exiting the store.");
-
-        // Move to the exit waypoint
-        MoveTo(waypoints[4]);
     }
-
-    public event System.Action<GameObject> OnNPCExit;
 
     /// <summary>
     /// Function to move npc from one place to another
     /// </summary>
     /// <param name="destination"></param>
-    private void MoveTo(Transform destination)
+    private void StartWalkingTo(Transform destination)
     {
+        if (animator != null)
+            animator.SetBool("isWalking", true); // Start walking animation
+
         target = destination;
         agent.SetDestination(target.position);
     }
+
+    public event System.Action<GameObject> OnNPCExit;
 
     /// <summary>
     /// Coroutine to stop npcs
@@ -157,6 +165,18 @@ public class NPCController : MonoBehaviour
         while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
         {
             yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Function to enable or disable walking animation
+    /// </summary>
+    /// <param name="isWalking"></param>
+    private void SetWalking(bool isWalking)
+    {
+        if (animator != null)
+        {
+            animator.SetBool("isWalking", isWalking);
         }
     }
 }
