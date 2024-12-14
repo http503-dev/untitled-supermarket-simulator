@@ -114,9 +114,10 @@ public class NPCController : MonoBehaviour
                     yield break;
 
                 case NPCState.Exiting:
+                    FindObjectOfType<NPCSpawner>().HandleNPCExit(this);
+                    Debug.Log("NPC exited and handling npc exit");
                     StartWalkingTo(waypoints[4]); // Move to Exit
                     yield return WaitForArrival();
-                    OnNPCExit?.Invoke(gameObject); // Notify spawner
                     Destroy(gameObject); // Remove NPC
                     yield break;
             }
@@ -138,7 +139,10 @@ public class NPCController : MonoBehaviour
     public void ExitStore()
     {
         currentState = NPCState.Exiting; // Set state to Exiting
+        FindObjectOfType<NPCSpawner>().HandleNPCExit(this);
         Debug.Log($"{CustomerData.fullName} is exiting the store.");
+
+        StartWalkingTo(waypoints[4]);
     }
 
     /// <summary>

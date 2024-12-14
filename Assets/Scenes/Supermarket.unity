@@ -3758,7 +3758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &370049916
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4585,7 +4585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.837
+      value: -2.056
       objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503726, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12598,7 +12598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5932091c1324b048815ca82575fa5fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shiftDuration: 60
+  shiftDuration: 480
   clockText: {fileID: 989078707}
   mainMenuButton: {fileID: 370049915}
   newShiftButton: {fileID: 413455443}

@@ -16,9 +16,9 @@ public class NPCSpawner : MonoBehaviour
     /// </summary>
     public Transform spawnPoint; // Where NPCs will spawn
     public Transform[] waypoints;
-    public float minSpawnInterval = 2f; // Minimum time between spawns
-    public float maxSpawnInterval = 5f; // Maximum time between spawns
-    public int maxNPC = 10; // Maximum number of NPCs in the store
+    public float minSpawnInterval = 3f; // Minimum time between spawns
+    public float maxSpawnInterval = 10f; // Maximum time between spawns
+    public int maxNPC = 3; // Maximum number of NPCs in the store
     private int currentNPCCount = 0;
 
     public CustomerGenerator customerGenerator; // Reference to Customer Generator
@@ -86,11 +86,9 @@ public class NPCSpawner : MonoBehaviour
             npcController.waypoints = waypoints; // Assign waypoints to NPC
             npcController.Initialize(customer);
 
-            // Handle NPC exiting
-            npcController.OnNPCExit += HandleNPCExit;
         }
     }
-    private void HandleNPCExit(GameObject npc)
+    public void HandleNPCExit(NPCController npc)
     {
         // Decrement NPC count when one exits the store
         currentNPCCount--;

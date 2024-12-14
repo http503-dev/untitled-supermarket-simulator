@@ -53,7 +53,7 @@ public class CustomerGenerator : MonoBehaviour
         string lastName = lastNames[random.Next(lastNames.Count)];
         DateTime dateOfBirth = GenerateRandomDate(new DateTime(1960, 1, 1), new DateTime(2005, 12, 31));
         int spriteIndex = random.Next(0, mugshotSprites.Length); // Get random mugshot index
-        bool isFake = random.Next(0, 2) == 1;
+        bool isFake = random.Next(0, 100) < 10;
 
         // Generate shopping list
         List<ShoppingItem> shoppingList = GenerateShoppingList();
