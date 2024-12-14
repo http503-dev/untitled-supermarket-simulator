@@ -10,6 +10,8 @@ using TMPro;
 using Firebase.Auth;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+using Firebase.Database;
 
 public class ShiftTimer : MonoBehaviour
 {
@@ -32,12 +34,16 @@ public class ShiftTimer : MonoBehaviour
     /// </summary>
     public ShiftDataTracker shiftDataTracker;
     private string userId;
+    private DatabaseReference reference;
+    private FirebaseAuth auth;
 
     /// <summary>
     /// Set elapsed time to 0 and that a shift has started 
     /// </summary>
     void Start()
     {
+        reference = FirebaseDatabase.DefaultInstance.RootReference;
+        auth = FirebaseAuth.DefaultInstance;
         userId = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
         if (string.IsNullOrEmpty(userId))
         {
@@ -102,11 +108,30 @@ public class ShiftTimer : MonoBehaviour
         Debug.Log("Shift ended successfully.");
     }
 
-    public void LoadMainMenu()
+    public async void QuitGame()
     {
-        SceneManager.LoadScene("MainMenu");
-    }
+        if (auth.CurrentUser != null)
+        {
+            string userId = auth.CurrentUser.UserId;
 
+            try
+            {
+                // Reference to the UID node under sessions
+                var sessionRef = reference.Child($"sessions/{userId}");
+                await sessionRef.RemoveValueAsync();
+
+                Debug.Log($"Session for user {userId} deleted successfully.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error deleting session for user {userId}: {e.Message}");
+            }
+        }
+
+        // Exit the application
+        Application.Quit();
+    }
+    
     public void StartNewShift()
     {
         SceneManager.LoadScene("Supermarket");

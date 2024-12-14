@@ -4,7 +4,7 @@ public class SessionData
     public bool gameConnected;
     public bool webConnected;
     public string createdOn;
-    public Customer customers;
+    public Customer customer;
 
     [System.Serializable]
     public class Customer
@@ -15,17 +15,17 @@ public class SessionData
         public int spriteIndex;
     }
 
-    public SessionData(bool gameConnected, bool webConnected, string createdOn, Customer customers)
+    public SessionData(bool gameConnected, bool webConnected, string createdOn, Customer customer)
     {
         this.gameConnected = gameConnected;
         this.webConnected = webConnected;
         this.createdOn = createdOn;
-        this.customers = customers;
+        this.customer = customer;
     }
 
     public void SetCustomer(string name, string dateOfBirth, bool isBlacklisted, int spriteIndex)
     {
-        customers = new Customer
+        customer = new Customer
         {
             name = name,
             dateOfBirth = dateOfBirth,
